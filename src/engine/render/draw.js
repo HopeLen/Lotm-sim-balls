@@ -252,50 +252,24 @@ function drawModeHint() {
 }
 
 // --- ability / cooldown HUD -------------------------------------------------
-// One compact panel per ball. Panels are placed by each ball's FIXED hudSlot
-// (not its live array index), so when a ball dies its slot simply empties and
-// the survivors' panels stay exactly where they were. Desktop puts them in the
-// side gutters; mobile lays them along the bottom of the frame.
+// A row of compact panels directly below the arena — one column per ball,
+// spanning the arena's width, in both modes. Panels are placed by each ball's
+// FIXED hudSlot (not its live array index), so when a ball dies its slot simply
+// empties and the survivors' panels stay exactly where they were.
 
 function drawAbilityPanels(balls) {
-  if (Config.MODE === "mobile") drawAbilityPanelsBottom(balls);
-  else drawAbilityPanelsSides(balls);
-}
+  if (balls.length === 0) return;
 
-// Desktop: even slots on the left gutter, odd on the right, stacked by row on
-// a fixed stride so a death never shifts anyone.
-function drawAbilityPanelsSides(balls) {
   const vp = Config.VIEWPORT;
-  const margin = 14;
-  const stride = 108;
-  const panelW = Math.min(240, vp.x - margin * 2); // gutter width (symmetric)
-  if (panelW < 90) return;
-
-  const leftX = vp.x - margin - panelW;
-  const rightX = vp.x + vp.size + margin;
-
-  balls.forEach((ball) => {
-    const slot = ball.hudSlot ?? 0;
-    const x = slot % 2 === 0 ? leftX : rightX;
-    const y = vp.y + Math.floor(slot / 2) * stride;
-    drawAbilityPanel(ball, x, y, panelW);
-  });
-}
-
-// Mobile: one column per slot along the bottom of the frame, bottom-aligned.
-function drawAbilityPanelsBottom(balls) {
-  const f = Config.FRAME;
   const slots = Math.max(1, Config.BALL_COUNT);
-  const margin = f.w * 0.04;
-  const gap = 10;
-  const panelW = (f.w - margin * 2 - gap * (slots - 1)) / slots;
+  const gap = 12;
+  const panelW = (vp.size - gap * (slots - 1)) / slots;
   if (panelW < 60) return;
 
-  const bottomY = f.y + f.h - margin;
+  const top = vp.y + vp.size + 12; // directly under the arena's bottom edge
   balls.forEach((ball) => {
     const slot = ball.hudSlot ?? 0;
-    const x = f.x + margin + slot * (panelW + gap);
-    drawAbilityPanel(ball, x, bottomY - panelHeight(ball), panelW);
+    drawAbilityPanel(ball, vp.x + slot * (panelW + gap), top, panelW);
   });
 }
 
