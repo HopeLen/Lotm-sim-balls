@@ -14,8 +14,14 @@ import PhysicsWorld from "./engine/physicsWorld.js";
 import GameLoop from "./engine/loop.js";
 import Draw from "./engine/render/draw.js";
 import Ball from "./engine/entities/Ball.js";
+import SequenceParser from "./engine/sequenceParser.js";
+import { getSequence } from "./pathways/index.js";
+import Sound from "./engine/sound.js";
 
 const canvas = document.getElementById("arena");
+
+// Warm up any sound files that have paths set (no-op for the empty ones).
+Sound.preload();
 
 // 1. Engine + walls — sized to the arena square, NOT the full canvas
 PhysicsWorld.init(Config.ARENA_X, Config.ARENA_Y, Config.ARENA_SIZE);
@@ -32,23 +38,45 @@ for (let i = 0; i < Config.BALL_COUNT; i++) {
   const y =
     Config.ARENA_Y + margin + Math.random() * (Config.ARENA_SIZE - margin * 2);
 
-  const body = PhysicsWorld.createBallBody(x, y, Config.BALL_RADIUS);
-  const ball = new Ball({
-    name: `Ball ${i + 1}`,
-    color: Config.COLORS[i % Config.COLORS.length],
-    body,
-  });
+  // Balls are built straight from pathway data — pick a sequence, run it
+  // through the parser, push it. Right now it's the Fool pathway's Magician
+  // (Seq. 7) vs its Clown (Seq. 8); any remaining balls spawn plain until
+  // their sequence is filled in.
+  let ball;
+  if (i === 0) {
+    ball = SequenceParser.toBall(getSequence("Door", 9), { x, y });
+  } else if (i === 1) {
+    ball = SequenceParser.toBall(getSequence("Fool", 8), { x, y });
+  } else {
+    const body = PhysicsWorld.createBallBody(x, y, Config.BALL_RADIUS);
+    ball = new Ball({
+      name: `Ball ${i + 1}`,
+      color: Config.COLORS[i % Config.COLORS.length],
+      body,
+    });
+  }
+
+  // Fixed HUD slot, assigned once at spawn: the ball's panel always renders
+  // in this slot even after another ball dies, so surviving HUDs never slide
+  // around (which is disorienting for viewers following the balls).
+  ball.hudSlot = i;
   balls.push(ball);
 }
 
 GameLoop.setBalls(balls);
 
-// 4. Handle resize: arena re-centers itself (ARENA_X/Y/SIZE are getters
-// that recompute from the new window size), so just rebuild walls + canvas
+// 4. Resize just re-fits the canvas. The simulation lives in a fixed logical
+// arena (see config.js), so nothing about physics/walls depends on window
+// size — only the render transform, which is recomputed every frame.
 window.addEventListener("resize", () => {
-  PhysicsWorld.resize(Config.ARENA_X, Config.ARENA_Y, Config.ARENA_SIZE);
   Draw.resize(canvas);
 });
 
-// 5. Go
+// 5. Switch layout modes with the "M" key (mobile ↔ desktop). Nothing else
+// changes — same fight, re-laid-out for portrait or landscape recording.
+window.addEventListener("keydown", (e) => {
+  if (e.key === "m" || e.key === "M") Config.toggleMode();
+});
+
+// 6. Go
 GameLoop.start();

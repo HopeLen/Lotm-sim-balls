@@ -6,16 +6,23 @@
 // drawing — just bodies, bounds, and motion rules.
 
 import Config from "../config.js";
+import Triggers from "./triggers.js";
 
 // Matter.js is loaded via a classic (non-module) <script> tag in index.html,
 // so it attaches itself to `window.Matter` rather than being import-able.
 // Classic scripts always run before deferred module scripts, so by the
 // time this file executes, the global is guaranteed to exist.
-const { Engine, World, Bodies, Body } = Matter;
+const { Engine, World, Bodies, Body, Events } = Matter;
 
 let engine = null;
 let world = null;
 let walls = [];
+
+// Collision categories. Walls get their own bit so a ball can be made to
+// PASS THROUGH walls (while still colliding with other balls) by clearing
+// that bit from its mask — see phaseThroughWalls(), used by the wall-wrap
+// ability. Everything else uses Matter's default category (0x0001).
+const WALL_CATEGORY = 0x0002;
 
 /**
  * Creates the engine + world and adds the arena boundary.
@@ -39,7 +46,46 @@ function init(arenaX, arenaY, arenaSize) {
   walls = createWalls(arenaX, arenaY, arenaSize);
   World.add(world, walls);
 
+  registerCollisionHandling();
+
   return { engine, world };
+}
+
+/**
+ * Contact detection lives here (physicsWorld only knows "these two bodies
+ * touched"); deciding what that MEANS gameplay-wise is deliberately kept
+ * out of this file — see combat.js, which is what actually listens for
+ * the "projectileHit"/"projectileExpire" triggers fired below.
+ *
+ * Projectiles are sensor bodies (see spawner.js), so they still raise
+ * collisionStart against everything they overlap without physically
+ * bouncing off it — that's what lets a bullet travel in a straight line
+ * and still be detected hitting a ball or a wall.
+ */
+function registerCollisionHandling() {
+  Events.on(engine, "collisionStart", (evt) => {
+    evt.pairs.forEach(({ bodyA, bodyB }) => {
+      const projBody = bodyA.projectileRef ? bodyA : bodyB.projectileRef ? bodyB : null;
+
+      if (projBody) {
+        const other = projBody === bodyA ? bodyB : bodyA;
+        const projectile = projBody.projectileRef;
+
+        // Skip the projectile's own owner — it's spawned just outside
+        // their body, but this guards against any edge-case overlap.
+        if (other.ballRef && other.ballRef !== projectile.owner) {
+          Triggers.fire("projectileHit", { projectile, target: other.ballRef });
+        } else if (other.isStatic) {
+          Triggers.fire("projectileExpire", { projectile });
+        }
+        return;
+      }
+
+      if (bodyA.ballRef && bodyB.ballRef) {
+        Triggers.fire("collision", { a: bodyA.ballRef, b: bodyB.ballRef });
+      }
+    });
+  });
 }
 
 /**
@@ -56,7 +102,12 @@ function init(arenaX, arenaY, arenaSize) {
  */
 function createWalls(x, y, size) {
   const t = Config.WALL_THICKNESS;
-  const opts = { isStatic: true, restitution: 1, friction: 0 };
+  const opts = {
+    isStatic: true,
+    restitution: 1,
+    friction: 0,
+    collisionFilter: { category: WALL_CATEGORY },
+  };
   return [
     Bodies.rectangle(x + size / 2, y - t / 2, size + t * 2, t, opts), // top
     Bodies.rectangle(x + size / 2, y + size + t / 2, size + t * 2, t, opts), // bottom
@@ -101,11 +152,29 @@ function createBallBody(x, y, radius) {
 }
 
 /**
- * Safety net: even with higher solver iterations, a sliver of a chance
- * remains that imprecision leaves a ball nearly motionless for a frame
- * (most commonly right at a corner). Run this every frame, after the
- * physics step. It's a no-op for any ball already near target speed —
- * it only intervenes when something has actually gone wrong.
+ * Makes a body ignore the arena walls (it will phase straight through them)
+ * while still colliding with other balls. Used by the wall-wrap ability,
+ * which repositions the ball to the opposite side itself (see wrap.js).
+ */
+function phaseThroughWalls(body) {
+  // Clear the wall bit from the body's collision mask (default mask is all-1s).
+  body.collisionFilter.mask = 0xffffffff & ~WALL_CATEGORY;
+}
+
+/**
+ * Re-enables wall collision for a body previously passed to
+ * phaseThroughWalls() — used when an enemy's temporary door "passage" ends.
+ */
+function restoreWallCollision(body) {
+  body.collisionFilter.mask = 0xffffffff;
+}
+
+/**
+ * Safety net + knockback decay. Every frame, after the physics step:
+ *  - a ball that lost speed (solver imprecision) is rescaled back up to cruise;
+ *  - a ball that's FASTER than cruise (a knockback shove) is eased back down,
+ *    keeping its direction — so a hit sends it flying, then it settles.
+ * It's a no-op for any ball already at cruise speed.
  */
 function maintainSpeed(balls, targetSpeed) {
   balls.forEach((ball) => {
@@ -122,6 +191,11 @@ function maintainSpeed(balls, targetSpeed) {
     } else if (speed < targetSpeed * 0.9) {
       // Lost some speed to solver imprecision — rescale, keep direction.
       const scale = targetSpeed / speed;
+      Body.setVelocity(ball.body, { x: v.x * scale, y: v.y * scale });
+    } else if (speed > targetSpeed * 1.05) {
+      // Above cruise (knockback) — decay ~10%/frame back toward cruise.
+      const next = Math.max(targetSpeed, speed * 0.9);
+      const scale = next / speed;
       Body.setVelocity(ball.body, { x: v.x * scale, y: v.y * scale });
     }
   });
@@ -141,6 +215,7 @@ function maintainSpeed(balls, targetSpeed) {
  */
 function containBalls(balls, arenaX, arenaY, arenaSize) {
   balls.forEach((ball) => {
+    if (ball.wraps) return; // wrapping balls are handled by wrap.js, not clamped
     const r = ball.radius;
     const minX = arenaX + r;
     const maxX = arenaX + arenaSize - r;
@@ -200,6 +275,8 @@ const PhysicsWorld = {
   init,
   resize,
   createBallBody,
+  phaseThroughWalls,
+  restoreWallCollision,
   maintainSpeed,
   containBalls,
   step,

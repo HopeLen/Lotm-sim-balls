@@ -3,8 +3,22 @@
 // hardcode numbers that belong here — import from this file instead.
 
 const Config = {
-  // Full canvas size (the whole window). Used for the background and
-  // for centering the arena — walls/spawning should NOT use this directly.
+  // --- view mode ----------------------------------------------------------
+  // "mobile"  → portrait 9:16 column (Instagram Reels / YouTube Shorts).
+  // "desktop" → full landscape window (longer-form videos).
+  // Only affects how the arena is LAID OUT ON SCREEN — never the simulation.
+  _mode: "mobile",
+  get MODE() {
+    return this._mode;
+  },
+  setMode(m) {
+    if (m === "mobile" || m === "desktop") this._mode = m;
+  },
+  toggleMode() {
+    this._mode = this._mode === "mobile" ? "desktop" : "mobile";
+  },
+
+  // Full canvas size (the whole browser window), in CSS pixels.
   get WIDTH() {
     return window.innerWidth;
   },
@@ -12,31 +26,62 @@ const Config = {
     return window.innerHeight;
   },
 
-  // The playable battlefield: a square, centered in the canvas.
-  // Capped at 600px so it doesn't sprawl on huge monitors, but shrinks
-  // to fit smaller windows (80% of the limiting dimension).
-  get ARENA_SIZE() {
-    // Clamped to a minimum of 200px so a momentarily-tiny or zero window
-    // size (e.g. an embedded preview panel mid-layout) can't produce a
-    // degenerate (near-zero-area) arena and feed bad geometry to Matter.
-    const ideal = Math.min(this.WIDTH, this.HEIGHT) * 0.8;
-    return Math.max(200, Math.min(600, ideal));
-  },
-  get ARENA_X() {
-    return (this.WIDTH - this.ARENA_SIZE) / 2;
-  },
-  get ARENA_Y() {
-    return (this.HEIGHT - this.ARENA_SIZE) / 2;
+  // --- LOGICAL arena ------------------------------------------------------
+  // The simulation ALWAYS runs in this fixed, resolution-independent square.
+  // Physics, spawning, abilities, projectile sizes/speeds, teleport ranges —
+  // every gameplay number is in these logical units, not on-screen pixels.
+  // draw.js scales this space onto the screen (see VIEWPORT/SCALE), so
+  // switching modes or resizing the window never perturbs the simulation.
+  ARENA_X: 0,
+  ARENA_Y: 0,
+  ARENA_SIZE: 600,
+
+  // --- on-screen placement ------------------------------------------------
+  // FRAME is the content region for the current mode: the whole window in
+  // desktop, or a centered portrait 9:16 column in mobile (letterboxed).
+  get FRAME() {
+    const W = this.WIDTH;
+    const H = this.HEIGHT;
+    if (this._mode === "desktop") return { x: 0, y: 0, w: W, h: H };
+
+    const ratio = 9 / 16; // portrait
+    let h = H;
+    let w = h * ratio;
+    if (w > W) {
+      w = W;
+      h = w / ratio;
+    }
+    return { x: (W - w) / 2, y: (H - h) / 2, w, h };
   },
 
-  WALL_THICKNESS: 32, // generous relative to ball radius, scaled down
-  // a bit from before since the arena is smaller now
+  // VIEWPORT is where the logical arena is drawn on screen (CSS px). Recomputed
+  // from the window + mode every frame; nothing caches it.
+  get VIEWPORT() {
+    const f = this.FRAME;
+    if (this._mode === "desktop") {
+      // Centered square, leaving side gutters for the HUD.
+      const size = Math.max(200, Math.min(600, Math.min(f.w, f.h) * 0.72));
+      return { x: f.x + (f.w - size) / 2, y: f.y + (f.h - size) / 2, size };
+    }
+    // Mobile: a title band on top and a HUD strip at the bottom, arena between.
+    const margin = f.w * 0.06;
+    const titleBand = f.h * 0.09;
+    const size = Math.min(f.w - margin * 2, f.h * 0.6);
+    return { x: f.x + (f.w - size) / 2, y: f.y + titleBand, size };
+  },
 
-  BALL_RADIUS: 48,
-  BALL_INITIAL_SPEED: 4, // px/tick-ish, tuned empirically
+  // Logical-units → on-screen-pixels scale factor.
+  get SCALE() {
+    return this.VIEWPORT.size / this.ARENA_SIZE;
+  },
+
+  WALL_THICKNESS: 32, // logical units; generous relative to ball radius
+
+  BALL_RADIUS: 48, // logical units
+  BALL_INITIAL_SPEED: 4, // logical units/tick-ish, tuned empirically
   BALL_COUNT: 2,
 
-  FIXED_DELTA_MS: 1000 / 60, // physics step size, independent of actual frame time
+  FIXED_DELTA_MS: 1000 / 60, // physics step size, independent of frame time
 
   COLORS: [
     "#e63946", // Magician
