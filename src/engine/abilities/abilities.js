@@ -26,8 +26,9 @@ function tickCooldowns(balls, dtMs) {
       if (ability.cooldownRemaining > 0) ability.cooldownRemaining -= dtMs;
 
       // Optional per-frame upkeep — e.g. charge regeneration on a consumable
-      // ability. Most abilities don't define this.
-      ability.tick?.(dtMs, ball);
+      // ability, or an aura scanning `balls` for allies (Song of Courage).
+      // Most abilities don't define this.
+      ability.tick?.(dtMs, ball, balls);
 
       if (ability.trigger !== "cooldown") return;
       if (ability.cooldownRemaining > 0) return;
@@ -72,7 +73,10 @@ function nearestEnemy(self, balls) {
   let bestDist = Infinity;
   balls.forEach((b) => {
     if (b === self || b.dead) return;
-    const d = Math.hypot(b.position.x - self.position.x, b.position.y - self.position.y);
+    const d = Math.hypot(
+      b.position.x - self.position.x,
+      b.position.y - self.position.y,
+    );
     if (d < bestDist) {
       bestDist = d;
       best = b;

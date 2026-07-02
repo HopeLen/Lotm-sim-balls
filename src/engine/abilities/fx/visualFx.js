@@ -35,6 +35,13 @@ function spawnImpact({ x, y, color, maxRadius = 46, maxAge = 220 }) {
   particles.push({ type: "impact", x, y, age: 0, maxAge, color, maxRadius });
 }
 
+// A persistent ground circle (e.g. Song of Courage's healing zone): full
+// radius for its whole life, fading out near the end. Drawn under the balls
+// in its own pass (drawZones), not by drawParticles.
+function spawnZone({ x, y, color, radius, maxAge }) {
+  particles.push({ type: "zone", x, y, age: 0, maxAge, color, radius });
+}
+
 function spawnStreak({ from, to, color, maxAge = 200 }) {
   particles.push({
     type: "streak",
@@ -65,4 +72,12 @@ function list() {
   return particles;
 }
 
-export default { spawnBurst, spawnRing, spawnStreak, spawnImpact, tick, list };
+export default {
+  spawnBurst,
+  spawnRing,
+  spawnStreak,
+  spawnImpact,
+  spawnZone,
+  tick,
+  list,
+};

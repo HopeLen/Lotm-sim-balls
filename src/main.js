@@ -46,7 +46,7 @@ for (let i = 0; i < Config.BALL_COUNT; i++) {
   if (i === 0) {
     ball = SequenceParser.toBall(getSequence("Door", 9), { x, y });
   } else if (i === 1) {
-    ball = SequenceParser.toBall(getSequence("Fool", 8), { x, y });
+    ball = SequenceParser.toBall(getSequence("Sun", 9), { x, y });
   } else {
     const body = PhysicsWorld.createBallBody(x, y, Config.BALL_RADIUS);
     ball = new Ball({

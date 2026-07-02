@@ -15,6 +15,8 @@ import acrobaticDodge from "./defs/acrobaticDodge.js";
 import dashStrike from "./defs/dashStrike.js";
 import wallLink from "./defs/wallLink.js";
 import doorMaker from "./defs/doorMaker.js";
+import impactDamage from "./defs/impactDamage.js";
+import songOfCourage from "./defs/songOfCourage.js";
 
 const registry = {
   airBullet,
@@ -23,6 +25,8 @@ const registry = {
   dashStrike,
   wallLink,
   doorMaker,
+  impactDamage,
+  songOfCourage,
 };
 
 export default registry;

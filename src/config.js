@@ -54,20 +54,32 @@ const Config = {
     return { x: (W - w) / 2, y: (H - h) / 2, w, h };
   },
 
+  // Vertical placement of the arena within the frame, as a fraction of the
+  // leftover vertical space: 0.5 = dead center, < 0.5 lifts it UP (more room
+  // below for the HUD), > 0.5 pushes it down. Tuned slightly up so the "vs"
+  // title above + the taller HUD below feel balanced. Change this to taste.
+  ARENA_VERTICAL_ANCHOR: 0.3,
+
   // VIEWPORT is where the logical arena is drawn on screen (CSS px). Recomputed
   // from the window + mode every frame; nothing caches it.
   get VIEWPORT() {
     const f = this.FRAME;
+    const anchor = this.ARENA_VERTICAL_ANCHOR;
+
     if (this._mode === "desktop") {
-      // Centered square, leaving side gutters for the HUD.
+      // Centered square, leaving side gutters + room below for the HUD.
       const size = Math.max(200, Math.min(600, Math.min(f.w, f.h) * 0.72));
-      return { x: f.x + (f.w - size) / 2, y: f.y + (f.h - size) / 2, size };
+      return {
+        x: f.x + (f.w - size) / 2,
+        y: f.y + (f.h - size) * anchor,
+        size,
+      };
     }
-    // Mobile: a title band on top and a HUD strip at the bottom, arena between.
+    // Mobile: arena in the portrait frame, with room above for the versus
+    // title and below for the HUD.
     const margin = f.w * 0.06;
-    const titleBand = f.h * 0.09;
     const size = Math.min(f.w - margin * 2, f.h * 0.6);
-    return { x: f.x + (f.w - size) / 2, y: f.y + titleBand, size };
+    return { x: f.x + (f.w - size) / 2, y: f.y + (f.h - size) * anchor, size };
   },
 
   // Logical-units → on-screen-pixels scale factor.

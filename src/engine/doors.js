@@ -37,7 +37,8 @@ function spawnWallDoor(wall, pos, cfg, owner) {
 
   // Don't stack a fresh door on top of one already there (from this owner).
   const overlaps = doors.some(
-    (d) => d.owner === owner && d.wall === wall && Math.abs(d.pos - p) < cfg.half,
+    (d) =>
+      d.owner === owner && d.wall === wall && Math.abs(d.pos - p) < cfg.half,
   );
   if (overlaps) return;
 
@@ -121,11 +122,13 @@ function tick(balls, dtMs) {
 
         // A door is a hit like any other — Paper Figurine / Acrobatic Dodge get
         // a chance to void it and reposition away from the wall.
-        if (Abilities.tryInterceptHit(ball, {
-          attacker: door.owner,
-          attackerPos: doorPoint(door),
-          damage: door.dps,
-        })) {
+        if (
+          Abilities.tryInterceptHit(ball, {
+            attacker: door.owner,
+            attackerPos: doorPoint(door),
+            damage: door.dps,
+          })
+        ) {
           bailed = true;
           break;
         }
@@ -162,7 +165,13 @@ function startTransit(ball, door) {
   ball._transit = { color: door.color, elapsed: 0, max: 1500 };
   ball.wraps = true; // wrap.js carries it across; containBalls skips it
   PhysicsWorld.phaseThroughWalls(ball.body);
-  VisualFx.spawnBurst({ x: ball.position.x, y: ball.position.y, color: door.color, count: 10, maxAge: 260 });
+  VisualFx.spawnBurst({
+    x: ball.position.x,
+    y: ball.position.y,
+    color: door.color,
+    count: 10,
+    maxAge: 260,
+  });
 }
 
 // End the passage once the ball is clear of every wall band (or on timeout, so
@@ -174,13 +183,20 @@ function advanceTransit(ball, dtMs) {
   const { min, max } = bounds();
   const m = ball.radius * 1.3;
   const p = ball.position;
-  const clear = p.x > min + m && p.x < max - m && p.y > min + m && p.y < max - m;
+  const clear =
+    p.x > min + m && p.x < max - m && p.y > min + m && p.y < max - m;
 
   if (t.elapsed >= t.max || clear) {
     ball._transit = null;
     ball.wraps = false;
     PhysicsWorld.restoreWallCollision(ball.body);
-    VisualFx.spawnBurst({ x: p.x, y: p.y, color: t.color, count: 10, maxAge: 260 });
+    VisualFx.spawnBurst({
+      x: p.x,
+      y: p.y,
+      color: t.color,
+      count: 10,
+      maxAge: 260,
+    });
   }
 }
 

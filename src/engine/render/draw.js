@@ -26,7 +26,8 @@ let view = { x: 0, y: 0, scale: 1 };
 const roster = new Map(); // hudSlot -> { label, color }
 function updateRoster(balls) {
   balls.forEach((b) => {
-    if (!roster.has(b.hudSlot)) roster.set(b.hudSlot, { label: b.label, color: b.color });
+    if (!roster.has(b.hudSlot))
+      roster.set(b.hudSlot, { label: b.label, color: b.color });
   });
 }
 
@@ -107,9 +108,15 @@ function render(balls) {
   // entering, so together they read as one ball passing through.
   ctx.save();
   ctx.beginPath();
-  ctx.rect(Config.ARENA_X, Config.ARENA_Y, Config.ARENA_SIZE, Config.ARENA_SIZE);
+  ctx.rect(
+    Config.ARENA_X,
+    Config.ARENA_Y,
+    Config.ARENA_SIZE,
+    Config.ARENA_SIZE,
+  );
   ctx.clip();
   drawDoors(Doors.list()); // under the balls
+  drawZones(VisualFx.list()); // ability zones, also under the balls
   balls.forEach(drawBall);
   balls.forEach(drawStatusRings);
   drawProjectiles(Spawner.listProjectiles());
@@ -152,8 +159,32 @@ function drawProjectiles(projectiles) {
   });
 }
 
+// Ability zones (type "zone" particles, e.g. Song of Courage): a translucent
+// filled circle with a rim, held at full radius for the zone's whole life and
+// fading over its final stretch. Their own pass so they paint UNDER the balls
+// — drawParticles runs after the balls and ignores this type.
+function drawZones(particles) {
+  particles.forEach((p) => {
+    if (p.type !== "zone") return;
+    const t = p.age / p.maxAge;
+    const fade = Math.min(1, (1 - t) / 0.2); // steady, then fade in last 20%
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.globalAlpha = 0.14 * fade;
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    ctx.globalAlpha = 0.6 * fade;
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  });
+}
+
 function drawParticles(particles) {
   particles.forEach((p) => {
+    if (p.type === "zone") return; // painted earlier, under the balls
     const t = p.age / p.maxAge; // 0 -> 1 over its lifetime
     ctx.globalAlpha = 1 - t;
 
@@ -201,7 +232,9 @@ function drawParticles(particles) {
 // Built from the persistent roster so it stays complete after a ball dies.
 function drawTitle() {
   const vp = Config.VIEWPORT;
-  const entries = [...roster.entries()].sort((a, b) => a[0] - b[0]).map((e) => e[1]);
+  const entries = [...roster.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map((e) => e[1]);
   if (entries.length === 0) return;
 
   const fontSize = Math.max(16, Math.min(34, vp.size * 0.07));
@@ -213,7 +246,8 @@ function drawTitle() {
   const sepW = ctx.measureText(sep).width;
   let total = 0;
   entries.forEach((e, i) => {
-    total += ctx.measureText(e.label).width + (i < entries.length - 1 ? sepW : 0);
+    total +=
+      ctx.measureText(e.label).width + (i < entries.length - 1 ? sepW : 0);
   });
 
   let x = vp.x + vp.size / 2 - total / 2;
@@ -273,18 +307,28 @@ function drawAbilityPanels(balls) {
   });
 }
 
+// HUD panel metrics, shared by panelHeight() and drawAbilityPanel() so they
+// never drift.
+const PANEL_PAD = 8;
+const PANEL_PORTRAIT_R = 22; // mini sequence portrait (radius) at the panel top
+const PANEL_PORTRAIT_GAP = 6;
+const PANEL_NAME_H = 16;
+const PANEL_ROW_H = 24;
+
 function panelHeight(ball) {
-  const pad = 8;
-  const headerH = 18;
-  const rowH = 24;
-  return pad * 2 + headerH + Math.max(1, ball.abilities.length) * rowH;
+  return (
+    PANEL_PAD * 2 +
+    PANEL_PORTRAIT_R * 2 +
+    PANEL_PORTRAIT_GAP +
+    PANEL_NAME_H +
+    Math.max(1, ball.abilities.length) * PANEL_ROW_H
+  );
 }
 
 // Draws one panel and returns its total height (so callers can stack them).
+// Header is a mini of the ball (its sequence portrait) with the name beneath —
+// so viewers can match each panel to the ball it belongs to at a glance.
 function drawAbilityPanel(ball, x, y, w) {
-  const pad = 8;
-  const headerH = 18;
-  const rowH = 24;
   const h = panelHeight(ball);
 
   // backing plate
@@ -294,35 +338,70 @@ function drawAbilityPanel(ball, x, y, w) {
   ctx.lineWidth = 1;
   ctx.strokeRect(x, y, w, h);
 
-  const innerX = x + pad;
-  let cy = y + pad;
+  const cx = x + w / 2;
+  let cy = y + PANEL_PAD;
 
-  // header: color dot + (truncated) ball name
-  ctx.fillStyle = ball.color;
-  ctx.beginPath();
-  ctx.arc(innerX + 5, cy + 6, 5, 0, Math.PI * 2);
-  ctx.fill();
+  // sequence portrait, centered at the top
+  drawPanelPortrait(ball, cx, cy + PANEL_PORTRAIT_R, PANEL_PORTRAIT_R);
+  cy += PANEL_PORTRAIT_R * 2 + PANEL_PORTRAIT_GAP;
 
+  // name, centered under the portrait
   ctx.fillStyle = "#e8eaf0";
   ctx.font = "bold 12px sans-serif";
-  ctx.textAlign = "left";
+  ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  ctx.fillText(truncateText(ball.label, w - pad * 2 - 16), innerX + 16, cy);
-  cy += headerH;
+  ctx.fillText(truncateText(ball.label, w - PANEL_PAD * 2), cx, cy);
+  cy += PANEL_NAME_H;
 
+  const innerX = x + PANEL_PAD;
   if (ball.abilities.length === 0) {
     ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.font = "italic 11px sans-serif";
-    ctx.fillText("no abilities", innerX, cy + 2);
+    ctx.textAlign = "center";
+    ctx.fillText("no abilities", cx, cy + 2);
     return h;
   }
 
   ball.abilities.forEach((ability) => {
-    drawAbilityRow(ability, innerX, cy, w - pad * 2, ball.color);
-    cy += rowH;
+    drawAbilityRow(ability, innerX, cy, w - PANEL_PAD * 2, ball.color);
+    cy += PANEL_ROW_H;
   });
 
   return h;
+}
+
+// A mini of the ball — color disc + clipped sequence portrait — for the panel
+// header. Falls back to just the color disc while the image loads or if there
+// isn't one.
+function drawPanelPortrait(ball, cx, cy, r) {
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = ball.color;
+  ctx.fill();
+
+  const img = getImage(ball.imageLink);
+  if (img) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+    const box = 2 * r * IMAGE_FILL;
+    const s = Math.min(box / img.width, box / img.height);
+    ctx.drawImage(
+      img,
+      cx - (img.width * s) / 2,
+      cy - (img.height * s) / 2,
+      img.width * s,
+      img.height * s,
+    );
+    ctx.restore();
+  }
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(255,255,255,0.35)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
 }
 
 function drawAbilityRow(ability, x, y, w, accent) {
@@ -361,11 +440,7 @@ function drawAbilityRow(ability, x, y, w, accent) {
   const barH = 5;
   ctx.fillStyle = "rgba(255,255,255,0.12)";
   ctx.fillRect(x, barY, w, barH);
-  ctx.fillStyle = !hasCd
-    ? "rgba(147,197,253,0.7)"
-    : ready
-      ? "#4ade80"
-      : accent;
+  ctx.fillStyle = !hasCd ? "rgba(147,197,253,0.7)" : ready ? "#4ade80" : accent;
   ctx.fillRect(x, barY, w * readyFrac, barH);
 }
 
@@ -478,17 +553,41 @@ function drawDoors(doors) {
     let ex1;
     let ey1;
     if (d.wall === "left") {
-      rx = min; ry = d.pos - d.half; rw = thick; rh = d.half * 2;
-      ex0 = min; ey0 = ry; ex1 = min; ey1 = ry + rh;
+      rx = min;
+      ry = d.pos - d.half;
+      rw = thick;
+      rh = d.half * 2;
+      ex0 = min;
+      ey0 = ry;
+      ex1 = min;
+      ey1 = ry + rh;
     } else if (d.wall === "right") {
-      rx = max - thick; ry = d.pos - d.half; rw = thick; rh = d.half * 2;
-      ex0 = max; ey0 = ry; ex1 = max; ey1 = ry + rh;
+      rx = max - thick;
+      ry = d.pos - d.half;
+      rw = thick;
+      rh = d.half * 2;
+      ex0 = max;
+      ey0 = ry;
+      ex1 = max;
+      ey1 = ry + rh;
     } else if (d.wall === "top") {
-      rx = d.pos - d.half; ry = min; rw = d.half * 2; rh = thick;
-      ex0 = rx; ey0 = min; ex1 = rx + rw; ey1 = min;
+      rx = d.pos - d.half;
+      ry = min;
+      rw = d.half * 2;
+      rh = thick;
+      ex0 = rx;
+      ey0 = min;
+      ex1 = rx + rw;
+      ey1 = min;
     } else {
-      rx = d.pos - d.half; ry = max - thick; rw = d.half * 2; rh = thick;
-      ex0 = rx; ey0 = max; ex1 = rx + rw; ey1 = max;
+      rx = d.pos - d.half;
+      ry = max - thick;
+      rw = d.half * 2;
+      rh = thick;
+      ex0 = rx;
+      ey0 = max;
+      ex1 = rx + rw;
+      ey1 = max;
     }
 
     // inward glow
@@ -553,7 +652,10 @@ function drawBallAt(ball, x, y) {
 
   // Impact pop: for a few frames after being hit the ball swells slightly and
   // is washed white, giving the strike weight (see impact.js / loop.js).
-  const flash = Math.max(0, Math.min(1, (ball.hitFlash || 0) / HITFLASH_FRAMES));
+  const flash = Math.max(
+    0,
+    Math.min(1, (ball.hitFlash || 0) / HITFLASH_FRAMES),
+  );
   const r = ball.radius * (1 + 0.12 * flash);
 
   // Always fill the color circle first — for imageless balls it's the whole
@@ -594,7 +696,8 @@ function drawBallAt(ball, x, y) {
   // thin light outline so balls read clearly against the dark background
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.strokeStyle = flash > 0 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.25)";
+  ctx.strokeStyle =
+    flash > 0 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.25)";
   ctx.lineWidth = 1.5;
   ctx.stroke();
 }

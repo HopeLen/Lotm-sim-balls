@@ -32,7 +32,13 @@ export default function acrobaticDodge({
       const to = sidestep(from, attackerPos, distance);
 
       VisualFx.spawnStreak({ from, to, color: self.color, maxAge: 180 });
-      VisualFx.spawnBurst({ x: from.x, y: from.y, color: self.color, count: 8, maxAge: 250 });
+      VisualFx.spawnBurst({
+        x: from.x,
+        y: from.y,
+        color: self.color,
+        count: 8,
+        maxAge: 250,
+      });
       CommandQueue.push({ type: "teleport", ball: self, to });
 
       this.cooldownRemaining = this.cooldown; // start the recharge

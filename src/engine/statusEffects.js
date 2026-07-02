@@ -25,6 +25,13 @@ const registry = {
     },
   },
 
+  courage: {
+    // Sun Bard's Song of Courage buff. No onTick — being "courageous" is just
+    // having this effect active; combat.js reads inst.data.damageMult at each
+    // damage source and scales the holder's outgoing damage by it.
+    visual: { color: "#ffcf5c", style: "pulse" },
+  },
+
   slow: {
     visual: { color: "#5aa9e6", style: "dash" },
     onApply(ball) {

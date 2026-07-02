@@ -27,7 +27,14 @@ export default function doorMaker({
     onSpawn(self) {
       // `sound` is attached by the parser from the sequence entry; wrap.js
       // plays it each time a door opens.
-      self.doorDrop = { chance, dps, ttlMs, half, depth, sound: this.sound || null };
+      self.doorDrop = {
+        chance,
+        dps,
+        ttlMs,
+        half,
+        depth,
+        sound: this.sound || null,
+      };
     },
   };
 }

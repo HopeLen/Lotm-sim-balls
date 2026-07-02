@@ -1,0 +1,337 @@
+{
+  ".claude/settings.local.json": {
+    "mtime": 1782978804.5977108,
+    "ast_hash": "4c4fe43cadb10d57334b2f5420058c9e",
+    "semantic_hash": ""
+  },
+  "scripts/generatePathways.mjs": {
+    "mtime": 1782933757.305849,
+    "ast_hash": "7a02318bf2a98c79f3cbed73a249a081",
+    "semantic_hash": "7a02318bf2a98c79f3cbed73a249a081"
+  },
+  "src/config.js": {
+    "mtime": 1782976025.6672895,
+    "ast_hash": "6b244244d2412e2773126fd2c49eec5d",
+    "semantic_hash": ""
+  },
+  "src/engine/abilities/abilities.js": {
+    "mtime": 1782978922.7886,
+    "ast_hash": "812d45327522e0036494e93983d402fc",
+    "semantic_hash": ""
+  },
+  "src/engine/abilities/defs/acrobaticDodge.js": {
+    "mtime": 1782933757.4988983,
+    "ast_hash": "d1a28ef966f0c6765352e7c0b05b10e5",
+    "semantic_hash": "d1a28ef966f0c6765352e7c0b05b10e5"
+  },
+  "src/engine/abilities/defs/airBullet.js": {
+    "mtime": 1782922020.0262542,
+    "ast_hash": "11a668d88e6a625d7b9d9bbce53ad930",
+    "semantic_hash": "11a668d88e6a625d7b9d9bbce53ad930"
+  },
+  "src/engine/abilities/defs/dashStrike.js": {
+    "mtime": 1782922028.1302595,
+    "ast_hash": "08be539196777d3e40d561ff7ea2887b",
+    "semantic_hash": "08be539196777d3e40d561ff7ea2887b"
+  },
+  "src/engine/abilities/defs/doorMaker.js": {
+    "mtime": 1782933757.5338295,
+    "ast_hash": "bf0797f0871c0133049b1eb06b16a67d",
+    "semantic_hash": "bf0797f0871c0133049b1eb06b16a67d"
+  },
+  "src/engine/abilities/defs/paperFigurineSubstitution.js": {
+    "mtime": 1782933757.5637536,
+    "ast_hash": "da0ac8cede68d4092fabf8a5e0e3b0da",
+    "semantic_hash": "da0ac8cede68d4092fabf8a5e0e3b0da"
+  },
+  "src/engine/abilities/defs/wallLink.js": {
+    "mtime": 1782908007.6246338,
+    "ast_hash": "065f969cb8a96cd3ba96341339fb9c1e",
+    "semantic_hash": "065f969cb8a96cd3ba96341339fb9c1e"
+  },
+  "src/engine/abilities/fx/visualFx.js": {
+    "mtime": 1782978922.3741884,
+    "ast_hash": "4aac3bfb6dcd8b20ec99e5ad79e83f88",
+    "semantic_hash": ""
+  },
+  "src/engine/abilities/registry.js": {
+    "mtime": 1782976961.6701145,
+    "ast_hash": "0d0cfdd85655e25a7c3c5878acd3c130",
+    "semantic_hash": ""
+  },
+  "src/engine/abilities/roster.js": {
+    "mtime": 1782897974.4696994,
+    "ast_hash": "4b3da99797f7877472baf8084bd3b895",
+    "semantic_hash": "4b3da99797f7877472baf8084bd3b895"
+  },
+  "src/engine/combat.js": {
+    "mtime": 1782977474.378434,
+    "ast_hash": "d20901e736786d1dfa3338ae6b8526b5",
+    "semantic_hash": ""
+  },
+  "src/engine/commandQueue.js": {
+    "mtime": 1782897974.4711862,
+    "ast_hash": "7e51590d2d0bf415e7949791c972d17c",
+    "semantic_hash": "7e51590d2d0bf415e7949791c972d17c"
+  },
+  "src/engine/dash.js": {
+    "mtime": 1782933784.613458,
+    "ast_hash": "1910b5d1dac7657fb3bb59926715a4e9",
+    "semantic_hash": "1910b5d1dac7657fb3bb59926715a4e9"
+  },
+  "src/engine/doors.js": {
+    "mtime": 1782933757.7308564,
+    "ast_hash": "4aa77dd0292d9a941ebace5360279a82",
+    "semantic_hash": "4aa77dd0292d9a941ebace5360279a82"
+  },
+  "src/engine/entities/Ball.js": {
+    "mtime": 1782917084.6261451,
+    "ast_hash": "c232ee65320af27779e1267248506757",
+    "semantic_hash": "c232ee65320af27779e1267248506757"
+  },
+  "src/engine/impact.js": {
+    "mtime": 1782918525.4572685,
+    "ast_hash": "efdc3c9f67f009f40b8af7fcfe5919e7",
+    "semantic_hash": "efdc3c9f67f009f40b8af7fcfe5919e7"
+  },
+  "src/engine/loop.js": {
+    "mtime": 1782923555.383537,
+    "ast_hash": "63dafcc558149822849e6a66541c01a1",
+    "semantic_hash": "63dafcc558149822849e6a66541c01a1"
+  },
+  "src/engine/physicsWorld.js": {
+    "mtime": 1782933757.8149788,
+    "ast_hash": "31fddb475eba764a5bf41037130b5df7",
+    "semantic_hash": "31fddb475eba764a5bf41037130b5df7"
+  },
+  "src/engine/render/draw.js": {
+    "mtime": 1782978948.2537632,
+    "ast_hash": "87d2268b13129922fdd584247d01773f",
+    "semantic_hash": ""
+  },
+  "src/engine/sequenceParser.js": {
+    "mtime": 1782921988.8912332,
+    "ast_hash": "1cc953530fba034a7d1917ec9f8baabb",
+    "semantic_hash": "1cc953530fba034a7d1917ec9f8baabb"
+  },
+  "src/engine/sound.js": {
+    "mtime": 1782921974.3812232,
+    "ast_hash": "939a2e4b5352f0e0cc51bd4d6c6137c3",
+    "semantic_hash": "939a2e4b5352f0e0cc51bd4d6c6137c3"
+  },
+  "src/engine/spawner.js": {
+    "mtime": 1782933757.9533305,
+    "ast_hash": "23750b874176ac8cd14b149228a63daa",
+    "semantic_hash": "23750b874176ac8cd14b149228a63daa"
+  },
+  "src/engine/statusEffects.js": {
+    "mtime": 1782976967.166358,
+    "ast_hash": "57ae7979d1d824c1c61ebede32951be4",
+    "semantic_hash": ""
+  },
+  "src/engine/survival.js": {
+    "mtime": 1782923545.5229757,
+    "ast_hash": "3ce161620041b023e8615d5289cef58d",
+    "semantic_hash": "3ce161620041b023e8615d5289cef58d"
+  },
+  "src/engine/triggers.js": {
+    "mtime": 1782903139.9291778,
+    "ast_hash": "a3ec1b75cff4f6c32c7f47b91fe01270",
+    "semantic_hash": "a3ec1b75cff4f6c32c7f47b91fe01270"
+  },
+  "src/engine/wrap.js": {
+    "mtime": 1782922058.8482797,
+    "ast_hash": "0845b2c485ea020359d08e5e02c2fcd7",
+    "semantic_hash": "0845b2c485ea020359d08e5e02c2fcd7"
+  },
+  "src/main.js": {
+    "mtime": 1782977020.3605244,
+    "ast_hash": "ca685f1b8092739ba1021d650bc2ad4e",
+    "semantic_hash": ""
+  },
+  "src/pathways/Abyss.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "cf4318cd643eda5e31bc3aa2e2f83b04",
+    "semantic_hash": "cf4318cd643eda5e31bc3aa2e2f83b04"
+  },
+  "src/pathways/BlackEmperor.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "adec437d65ed8dd42de255db93001586",
+    "semantic_hash": "adec437d65ed8dd42de255db93001586"
+  },
+  "src/pathways/Chained.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "89cd26ecfba8a144eb1ba940a37aa382",
+    "semantic_hash": "89cd26ecfba8a144eb1ba940a37aa382"
+  },
+  "src/pathways/Darkness.js": {
+    "mtime": 1782901153.8724942,
+    "ast_hash": "a21ab3b65789ebd121370983f3a099cf",
+    "semantic_hash": "a21ab3b65789ebd121370983f3a099cf"
+  },
+  "src/pathways/Death.js": {
+    "mtime": 1782901153.8724942,
+    "ast_hash": "128604bb92f437b5a5d8d5bcd7b85378",
+    "semantic_hash": "128604bb92f437b5a5d8d5bcd7b85378"
+  },
+  "src/pathways/Demoness.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "bb62dfe3ad4ff53314f9bd6e2a906729",
+    "semantic_hash": "bb62dfe3ad4ff53314f9bd6e2a906729"
+  },
+  "src/pathways/Door.js": {
+    "mtime": 1782923149.1668155,
+    "ast_hash": "50c5fb83cd7a1d3acb01f94b7c09b769",
+    "semantic_hash": "50c5fb83cd7a1d3acb01f94b7c09b769"
+  },
+  "src/pathways/Error.js": {
+    "mtime": 1782901153.8714943,
+    "ast_hash": "52001e50684e23177c931782222678c2",
+    "semantic_hash": "52001e50684e23177c931782222678c2"
+  },
+  "src/pathways/Fool.js": {
+    "mtime": 1782933758.103253,
+    "ast_hash": "cf3320f1939e2f7c9bcf5937c11812da",
+    "semantic_hash": "cf3320f1939e2f7c9bcf5937c11812da"
+  },
+  "src/pathways/HangedMan.js": {
+    "mtime": 1782901153.8724942,
+    "ast_hash": "ce46460f120f32e96c4addef52f78d4d",
+    "semantic_hash": "ce46460f120f32e96c4addef52f78d4d"
+  },
+  "src/pathways/Hermit.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "ec4045be415a72131dfdaf94662266dc",
+    "semantic_hash": "ec4045be415a72131dfdaf94662266dc"
+  },
+  "src/pathways/Justiciar.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "42a5a37c493d4af195f6c5d84427d999",
+    "semantic_hash": "42a5a37c493d4af195f6c5d84427d999"
+  },
+  "src/pathways/Moon.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "c4b9ee06f0e44b23b9aa93c28d3f11ac",
+    "semantic_hash": "c4b9ee06f0e44b23b9aa93c28d3f11ac"
+  },
+  "src/pathways/Mother.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "253273684ca280168ec90bc47511e255",
+    "semantic_hash": "253273684ca280168ec90bc47511e255"
+  },
+  "src/pathways/Paragon.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "8b4d667529aa4b60710c258a3d63e889",
+    "semantic_hash": "8b4d667529aa4b60710c258a3d63e889"
+  },
+  "src/pathways/RedPriest.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "8e8ca34515819e67c6f496784117f30c",
+    "semantic_hash": "8e8ca34515819e67c6f496784117f30c"
+  },
+  "src/pathways/Sun.js": {
+    "mtime": 1782978955.1903188,
+    "ast_hash": "e80791a098558699e9bcb55e4ccf1ced",
+    "semantic_hash": ""
+  },
+  "src/pathways/TwilightGiant.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "a0b47bb37ccf39b30e90fba3b0d0cb82",
+    "semantic_hash": "a0b47bb37ccf39b30e90fba3b0d0cb82"
+  },
+  "src/pathways/Tyrant.js": {
+    "mtime": 1782901153.8724942,
+    "ast_hash": "950d550aa30a8d8e6cafe70a2b480ce0",
+    "semantic_hash": "950d550aa30a8d8e6cafe70a2b480ce0"
+  },
+  "src/pathways/Visionary.js": {
+    "mtime": 1782901153.8724942,
+    "ast_hash": "40ad1b12b7c49ac77f2ae55b18429ae7",
+    "semantic_hash": "40ad1b12b7c49ac77f2ae55b18429ae7"
+  },
+  "src/pathways/WheelOfFortune.js": {
+    "mtime": 1782901153.8734944,
+    "ast_hash": "c5d828da2507a0b99d2013f9c34a2358",
+    "semantic_hash": "c5d828da2507a0b99d2013f9c34a2358"
+  },
+  "src/pathways/WhiteTower.js": {
+    "mtime": 1782901153.8724942,
+    "ast_hash": "e06e81a3dcdd8d2f4eeaf332fb1510fb",
+    "semantic_hash": "e06e81a3dcdd8d2f4eeaf332fb1510fb"
+  },
+  "src/pathways/index.js": {
+    "mtime": 1782901205.2519016,
+    "ast_hash": "2ecac8a44e5ae69d09e978d1e8b93748",
+    "semantic_hash": "2ecac8a44e5ae69d09e978d1e8b93748"
+  },
+  "index.html": {
+    "mtime": 1782887159.0890577,
+    "ast_hash": "437e361c956a55d21b6e2a5418e85ed5",
+    "semantic_hash": "437e361c956a55d21b6e2a5418e85ed5"
+  },
+  "src/assets/Door/Apprentice.webp": {
+    "mtime": 1782908105.7404988,
+    "ast_hash": "96d0269af8b97b5bf800fd6ddcc2709b",
+    "semantic_hash": "96d0269af8b97b5bf800fd6ddcc2709b"
+  },
+  "src/assets/Fool/Clown.webp": {
+    "mtime": 1782902685.178558,
+    "ast_hash": "1fb9b82d57f7e72a3e5dbd3542568c09",
+    "semantic_hash": "1fb9b82d57f7e72a3e5dbd3542568c09"
+  },
+  "src/assets/Fool/Magician.webp": {
+    "mtime": 1782901965.9199228,
+    "ast_hash": "28c3ec79a2ad89326098e9356b91c838",
+    "semantic_hash": "28c3ec79a2ad89326098e9356b91c838"
+  },
+  ".claude/settings.json": {
+    "mtime": 1782977724.1233208,
+    "ast_hash": "e51077b6a7f1f67afc748f1a32a1557d",
+    "semantic_hash": ""
+  },
+  "src/engine/abilities/defs/impactDamage.js": {
+    "mtime": 1782977466.4654179,
+    "ast_hash": "545c11632c479d2b56bb10796ba841ec",
+    "semantic_hash": ""
+  },
+  "src/engine/abilities/defs/songOfCourage.js": {
+    "mtime": 1782978922.1449606,
+    "ast_hash": "d41801833de63bdb05e8c2696e87748f",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1782977724.1230292,
+    "ast_hash": "82efb97a359f5c7290bf2513d14686be",
+    "semantic_hash": ""
+  },
+  "src/assets/Sound/Death.mp3": {
+    "mtime": 1782921466.0250814,
+    "ast_hash": "0a1914f5e24cbed939d4e97b7d12e298",
+    "semantic_hash": ""
+  },
+  "src/assets/Sound/DoorOpening.mp3": {
+    "mtime": 1782920363.973104,
+    "ast_hash": "f174ef09b89eec29d0403fd5b6a3fb4e",
+    "semantic_hash": ""
+  },
+  "src/assets/Sound/FingerSnapping.mp3": {
+    "mtime": 1782919486.2519898,
+    "ast_hash": "86e01b04c3bfacd9d1ec64caebb613fe",
+    "semantic_hash": ""
+  },
+  "src/assets/Sound/Impact.mp3": {
+    "mtime": 1782920764.1270633,
+    "ast_hash": "cd2a12edc21eccc4a2c8bcf2f916a578",
+    "semantic_hash": ""
+  },
+  "src/assets/Sound/PaperTearing.mp3": {
+    "mtime": 1782920104.373943,
+    "ast_hash": "e408b13249b588fa5c92e1b4da09f6c4",
+    "semantic_hash": ""
+  },
+  "src/assets/Sound/Whoosh.mp3": {
+    "mtime": 1782919783.3120682,
+    "ast_hash": "37823c3b97c04b36ae4059edbc837003",
+    "semantic_hash": ""
+  }
+}

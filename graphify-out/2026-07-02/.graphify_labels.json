@@ -1,0 +1,15 @@
+{
+  "0": "Beyonder Pathway Definitions",
+  "1": "Rendering & HUD Drawing",
+  "2": "Game Loop & Config",
+  "3": "Abilities, Doors & Status Effects",
+  "4": "Physics World & Collisions",
+  "5": "Ability Definitions & Registry",
+  "6": "Combat & Visual FX",
+  "7": "Ball Model & Sequence Parsing",
+  "8": "Pathway Generation Script",
+  "10": "Fool Pathway Sprites",
+  "11": "App Bootstrap & Entry",
+  "12": "Door Pathway Sprites",
+  "13": "CLAUDE.md"
+}

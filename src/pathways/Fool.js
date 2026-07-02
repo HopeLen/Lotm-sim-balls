@@ -102,7 +102,13 @@ const Fool = [
       {
         def: "airBullet",
         // knockback = slight shove on hit (dash = heavy, doors = none)
-        params: { cooldown: 3000, damage: 8, speed: 12, radius: 9, knockback: 7 },
+        params: {
+          cooldown: 3000,
+          damage: 8,
+          speed: 12,
+          radius: 9,
+          knockback: 7,
+        },
         sound: sfx + "FingerSnapping.mp3",
       },
       {

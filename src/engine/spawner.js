@@ -30,7 +30,17 @@ function process(commands, balls) {
   });
 }
 
-function spawnProjectile({ x, y, vx, vy, radius, color, owner, damage, knockback = 0 }) {
+function spawnProjectile({
+  x,
+  y,
+  vx,
+  vy,
+  radius,
+  color,
+  owner,
+  damage,
+  knockback = 0,
+}) {
   // isSensor: true — projectiles report overlaps (so collisionStart still
   // fires) but never physically push or bounce off anything. That means
   // no special-casing needed to keep them from deflecting off walls or
@@ -60,7 +70,9 @@ function removeProjectile(body) {
 // this guarantees it can't circle the arena forever.
 function tickProjectiles(dtMs) {
   projectiles.forEach((p) => (p.age += dtMs));
-  const expired = projectiles.filter((p) => p.age >= PROJECTILE_MAX_LIFETIME_MS);
+  const expired = projectiles.filter(
+    (p) => p.age >= PROJECTILE_MAX_LIFETIME_MS,
+  );
   expired.forEach((p) => removeProjectile(p.body));
 }
 

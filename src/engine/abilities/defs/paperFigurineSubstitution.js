@@ -52,13 +52,30 @@ export default function paperFigurineSubstitution({
       this.charges -= 1;
 
       const from = { x: self.position.x, y: self.position.y };
-      const to = pickEscapePosition(from, attackerPos, minDistance, maxDistance);
+      const to = pickEscapePosition(
+        from,
+        attackerPos,
+        minDistance,
+        maxDistance,
+      );
 
       // Substitution animation: a paper "poof" at the old spot, a streak
       // tracing the swap across to the new spot, and a ring bloom on arrival.
-      VisualFx.spawnBurst({ x: from.x, y: from.y, color: "#f4a261", count: 16, maxAge: 400 });
+      VisualFx.spawnBurst({
+        x: from.x,
+        y: from.y,
+        color: "#f4a261",
+        count: 16,
+        maxAge: 400,
+      });
       VisualFx.spawnStreak({ from, to, color: "#f4a261", maxAge: 260 });
-      VisualFx.spawnRing({ x: to.x, y: to.y, color: "#f4a261", maxAge: 380, maxRadius: 70 });
+      VisualFx.spawnRing({
+        x: to.x,
+        y: to.y,
+        color: "#f4a261",
+        maxAge: 380,
+        maxRadius: 70,
+      });
 
       CommandQueue.push({ type: "teleport", ball: self, to });
       // Invincibility lives purely as a status effect (see statusEffects.js),

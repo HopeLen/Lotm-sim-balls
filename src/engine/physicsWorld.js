@@ -65,7 +65,11 @@ function init(arenaX, arenaY, arenaSize) {
 function registerCollisionHandling() {
   Events.on(engine, "collisionStart", (evt) => {
     evt.pairs.forEach(({ bodyA, bodyB }) => {
-      const projBody = bodyA.projectileRef ? bodyA : bodyB.projectileRef ? bodyB : null;
+      const projBody = bodyA.projectileRef
+        ? bodyA
+        : bodyB.projectileRef
+          ? bodyB
+          : null;
 
       if (projBody) {
         const other = projBody === bodyA ? bodyB : bodyA;
